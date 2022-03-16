@@ -1,4 +1,5 @@
 import { Auth0Provider } from '@bcwdev/auth0provider'
+import { bidsService } from '../services/BidsService'
 import { carsService } from '../services/CarsService'
 import BaseController from '../utils/BaseController'
 
@@ -10,6 +11,7 @@ export class CarsController extends BaseController {
       // the : signifys that this portion of the url is a variable and adds property on the 'params' object
       .get('/:id', this.getById)
       // all requests after the use require auth
+      .get('/:id/bids', this.getBids)
       .use(Auth0Provider.getAuthorizedUserInfo)
       .post('', this.create)
       .put('/:id', this.edit)
@@ -29,6 +31,15 @@ export class CarsController extends BaseController {
     try {
       const car = await carsService.getById(req.params.id)
       return res.send(car)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async getBids(req, res, next) {
+    try {
+      const bids = await bidsService.getBids({ carId: req.params.id })
+      return res.send(bids)
     } catch (error) {
       next(error)
     }
