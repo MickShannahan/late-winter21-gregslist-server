@@ -38,7 +38,7 @@ export class CarsController extends BaseController {
 
   async getBids(req, res, next) {
     try {
-      const bids = await bidsService.getBids({ carId: req.params.id })
+      const bids = await bidsService.getCarBids({ carId: req.params.id })
       return res.send(bids)
     } catch (error) {
       next(error)
