@@ -25,6 +25,7 @@ class BidsService {
       return {
         bidId: bidderBid.id,
         amount: bidderBid.amount,
+        carId: bidderBid.carId,
         ...bidderBid.bidder
       }
     })
@@ -38,11 +39,15 @@ class BidsService {
     }
     // Update bid, or if not found create
     // upsert true says to create one if one is not found
+    // NOTE turn your eyes away from the code below, it is bad and don't work well
+    // NOTE don't use this code to update your many to many
+    delete bid._id
     const newBid = await dbContext.Bids.findOneAndUpdate({ carId: bid.carId, accountId: bid.accountId }, bid, { upsert: true, new: true })
     // update the car's price
     car.price = bid.amount
     // save the change to the car
     await car.save()
+    await newBid.populate('bidder')
     return newBid
   }
 }
